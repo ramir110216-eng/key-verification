@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Verification</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0d0f14;color:#fff;font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.card{width:100%;max-width:420px;background:#171a21;border:1px solid #2b303b;border-radius:18px;padding:25px;text-align:center;box-shadow:0 10px 35px #0008}
+h1{font-size:24px;margin:0 0 10px}
+p{color:#aeb5c2}
+button{width:100%;border:0;border-radius:12px;padding:14px;margin-top:12px;font-size:16px;font-weight:bold;background:#3478f6;color:white}
+button:disabled{opacity:.55}
+.hidden{display:none}
+input{width:100%;padding:14px;border-radius:12px;border:1px solid #363c48;background:#0f1218;color:white;font-size:18px;text-align:center;margin-top:10px}
+.key{background:#0f1218;border:1px solid #343a46;border-radius:12px;padding:14px;margin-top:14px;font-family:monospace;font-size:17px;word-break:break-all}
+#status{min-height:24px;margin-top:14px;color:#b9c1ce}
+.success{color:#63e6a4!important}
+.error{color:#ff7070!important}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔐 Получение ключа</h1>
+  <p id="desc">Подтвердите, что вы не бот.</p>
+
+  <button id="verifyBtn">☑ Я не бот</button>
+
+  <div id="wait" class="hidden">
+    <p>Проверка... Подождите несколько секунд.</p>
+  </div>
+
+  <div id="task" class="hidden">
+    <p>Решите задачу:</p>
+    <h2>50 + 50 = ?</h2>
+    <input id="answer" type="number" inputmode="numeric" placeholder="Введите ответ">
+    <button id="checkBtn">Проверить</button>
+  </div>
+
+  <div id="getBox" class="hidden">
+    <p class="success">Проверка пройдена!</p>
+    <button id="getBtn">Get the key?</button>
+  </div>
+
+  <div id="keyBox" class="hidden">
+    <div class="key" id="key">Key_8961247816</div>
+    <button id="copyBtn">📋 Скопировать</button>
+    <p id="copyStatus"></p>
+  </div>
+
+  <div id="status"></div>
+</div>
+
+<script>
+const verifyBtn=document.getElementById('verifyBtn');
+const wait=document.getElementById('wait');
+const task=document.getElementById('task');
+const getBox=document.getElementById('getBox');
+const keyBox=document.getElementById('keyBox');
+const status=document.getElementById('status');
+const answer=document.getElementById('answer');
+
+verifyBtn.onclick=()=>{
+  verifyBtn.disabled=true;
+  verifyBtn.textContent='Проверяем...';
+  wait.classList.remove('hidden');
+  status.textContent='';
+  setTimeout(()=>{
+    wait.classList.add('hidden');
+    task.classList.remove('hidden');
+    verifyBtn.classList.add('hidden');
+  },3000);
+};
+
+document.getElementById('checkBtn').onclick=()=>{
+  if(answer.value.trim()==='100'){
+    task.classList.add('hidden');
+    getBox.classList.remove('hidden');
+    status.textContent='';
+  }else{
+    status.textContent='Неверный ответ. Попробуйте ещё раз.';
+    status.className='error';
+  }
+};
+
+document.getElementById('getBtn').onclick=()=>{
+  getBox.classList.add('hidden');
+  keyBox.classList.remove('hidden');
+};
+
+document.getElementById('copyBtn').onclick=async()=>{
+  const key=document.getElementById('key').textContent;
+  try{
+    await navigator.clipboard.writeText(key);
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=key; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+  }
+  document.getElementById('copyStatus').textContent='Ключ скопирован!';
+  document.getElementById('copyStatus').className='success';
+};
+</script>
+</body>
+</html>
